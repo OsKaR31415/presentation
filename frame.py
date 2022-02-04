@@ -27,17 +27,19 @@ class Frame:
             x -= self.width
             y += 1
         # set the char in the char matrix
-        self.text[y][x] = str(char)[0]
+        self.text[y][x] = str(char)[0]  # only take the first character
         self.color[y][x] = int(colour)
         return self
 
-    def str_at(self, y: int, x: int, string: str, colour: int =0):
+    def str_at(self, y: int, x: int, string: str, color: int =0):
         """Put the given string at the given position."""
         for pos, char in enumerate(string):
-            self.char_at(y, x+pos, char, colour)
+            self.char_at(y, x+pos, char, color)
         return self
 
     def erase_line(self, y: int):
         """Erase the given line."""
         self.text[y] = [" " for _ in range(self.width)]
         return self
+
+
