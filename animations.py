@@ -21,7 +21,7 @@ def center(screen, y: int, text: str, color: int =0):
 def after(frames_to_wait: int, animation):
     """Run animation after the given number of frames."""
     for _ in range(frames_to_wait):
-        yield [lambda fr: fr]
+        yield []
     yield from animation
 
 def appear_left(screen, y: int, text: str, color: int =0, delay: int =0):
