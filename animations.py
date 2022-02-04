@@ -13,7 +13,7 @@ def erase_line(screen, y: int):
     """Erase a given line."""
     yield [lambda fr: Frame.erase_line(fr, y)]
 
-def center(screen, y: int, text: str, color: int =0):
+def center(screen, y: int, text: str, color: int =255):
     """Write text at the center of the screen."""
     margin = (screen.width - len(text)) // 2
     yield [lambda fr: Frame.str_at(fr, y, margin, text, color)]
@@ -24,7 +24,7 @@ def after(frames_to_wait: int, animation):
         yield []
     yield from animation
 
-def appear_left(screen, y: int, text: str, color: int =0, delay: int =0):
+def appear_left(screen, y: int, text: str, color: int =255, delay: int =0):
     """Make the text to apear on the left"""
     test = str(text)
     for x in range(1, (screen.width - len(text))//2):
@@ -51,7 +51,7 @@ def center_fadein(screen, y: int, text: str):
 def appear(screen, line: int, text: str):
     """Make the given text to appear in the screen (fade in).
     Erasesthe line and then makes it to appear."""
-    yield from cons(erase_line(screen, line),
+    yield from concat(erase_line(screen, line),
                     center_fadein(screen, line, text))
 
 def concat(*animations):
