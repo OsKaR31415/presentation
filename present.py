@@ -19,7 +19,12 @@ def run_anim(screen, anim):
 
 def main(s):
     anim = concat(
-        appear_up(s, center, )
+        appear(s, 2, "un texte apparaîte"),
+        after(100, appear(s, 4, "un autre")),
+        after(200, appear(s, 2, "on le remplace")),
+        after(300, appear_left(s, 6, "youpi !!!", delay=2))
+        # *(after(3*y, center(s, y, "test")) for y in range(10)),
+        # *(after(3*y, erase_line(s, y-1)) for y in range(0, 10)),
     )
     run_anim(screen=s, anim=anim)
 
