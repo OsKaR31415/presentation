@@ -67,17 +67,6 @@ def fadein(screen, animation, *args, delay: int =0):
         yield from wait_for(delay)
 
 
-def appear_up(screen, animation, *args, final_y: int = None, delay: int = 0):
-    """Appear the text form the top"""
-    if final_y is None:
-        final_y = screen.height // 2
-    else:
-        final_y = int(final_y)
-    for height in range(0, final_y):
-        yield from animation(screen, *args, y=final_y)
-        yield from wait_for(delay)
-
-
 def put_char(screen, y: int, x: int, char: str, color: int = 255):
     yield [lambda fr: Frame.char_at(fr, y, x, str(char)[0], color)]
 
@@ -95,6 +84,20 @@ def center_fadein(screen, y: int, text: str, delay: int = 0):
     """Fade in the centered text.
     Duration: 20 frames (multiplied by delay+1)."""
     yield from fadein(screen, center, y, text, delay=delay)
+
+
+# def center_appear_up(screen, text: str, final_y: int = None,
+#     color: int = 255, delay: int = 0):
+#     """Appear the text from to top."""
+#     if final_y is None:
+#         final_y = screen.height // 2
+#     else:
+#         final_y = int(final_y)
+#     margin = (screen.width - len(text)) // 2
+#     for y in range(final_y):
+#         yield from put_text(yield, y, margin)
+#         yield from center(screen, y, str(text), color=int(color))
+#         yield from wait_for(delay)
 
 
 def appear(screen, line: int, text: str, delay: int = 0):
