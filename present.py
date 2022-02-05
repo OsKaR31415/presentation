@@ -23,7 +23,7 @@ def main(s):
         after(200,
             appear(s, 4, "Elle est faîte avec ma super librairie python !")),
         after(400,
-            appear_left(s, 6, ))
+            appear_left(s, 6, "youpiii"))
     )
     run_anim(screen=s, anim=anim)
 
