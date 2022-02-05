@@ -35,22 +35,43 @@ class Frame:
         """Put the given string at the given position."""
         string = wrap(string, width=self.width)
         for line_shift, line in enumerate(string):
-            for pos, char in enumerate(line):
-                self.char_at(y + line_shift, x+pos,
-                             char, color)
+            for col, char in enumerate(line):
+                self.char_at(y+line_shift, x+col, char, color)
+            # for pos, char in enumerate(line):
+            #     self.char_at(y + line_shift, x+pos, char, color)
         return self
 
     def erase_line(self, y: int):
-        """Erase the given line."""
+        """Erase the given line.
+        Args:
+            y (int): The index of the line to erase.
+        Returns:
+            Frame: The frame with the line erased. Also modifies self.
+        """
         self.text[y] = [" " for _ in range(self.width)]
         return self
 
-    def line(self, begin: (int, int), end: (int, int), char: str =None):
-        """Draw a straight line starting at *begin* coordinates and
-        ending and *end* coodinates."""
-        assert len(begin) == 2 and len(end) == 2  # both must be couples
-        self.move(*begin)
-        self.draw(*end)
+    def box(self, topleft: (int, int), bottomright: (int, int),
+            color: int =255):
+        """Draw a box (using unicode box-drawing), from the coordinates in
+        *topleft* to the coordinates in *bottomright*.
+        Args:
+            topleft (tuple(int, int)): The couple of coordinates of the
+                                       top-left corner of the box.
+            bottomright (tuple(int, int)): The couple of coordinates of the
+                                           bottom-right corner of the box.
+            color (int): The color to draw the box in. Default to 255 (white).
+        Returns:
+            Frame: The frame with the box drawn. Also modifies self.
+        """
+        top, left = topleft
+        bottom, right = bottomright
+        width, height = abs(right - left), abs(bottom - top)
+        self.str_at(top, left, '┏' + '━'*(width-1) + '┓', color)
+        for y in range(1, height):
+            self.char_at(top+y, left, '┃', color)
+            self.char_at(top+y, right, '┃', color)
+        self.str_at(bottom, left, '┗' +'━'*(width-1) + '┛', color)
         return self
 
 
