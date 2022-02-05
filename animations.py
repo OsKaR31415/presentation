@@ -67,6 +67,13 @@ def fadein(screen, animation, *args, delay: int =0):
         yield from wait_for(delay)
 
 
+def appear_up(screen, animation, *args, final_y: int = None, delay: int = 0):
+    """Appear the text form the top"""
+    if final_y is None:
+        final_y = screen.height // 2
+    for 
+
+
 def put_char(screen, y: int, x: int, char: str, color: int = 255):
     yield [lambda fr: Frame.char_at(fr, y, x, str(char)[0], color)]
 
