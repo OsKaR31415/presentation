@@ -71,7 +71,11 @@ def appear_up(screen, animation, *args, final_y: int = None, delay: int = 0):
     """Appear the text form the top"""
     if final_y is None:
         final_y = screen.height // 2
-    for 
+    else:
+        final_y = int(final_y)
+    for height in range(0, final_y):
+        yield from animation(screen, *args, y=final_y)
+        yield from wait_for(delay)
 
 
 def put_char(screen, y: int, x: int, char: str, color: int = 255):
