@@ -26,10 +26,25 @@ def wait_for(delay: int):
     for _ in range(delay):
         yield []
 
+
 def after(frames_to_wait: int, animation):
     """Run animation after the given number of frames."""
     yield from wait_for(frames_to_wait)
     yield from animation
+
+
+def then(first_anim, second_anim, delay: int = 0):
+    """Create a new animation made of *first_anim* and then *second_anim*."""
+    yield from first_anim
+    yield from wait_for(delay)
+    yield from second_anim
+
+
+def one_by_one(*animations, delay: int = 0):
+    """Make animations to be played one at a time."""
+    for anim in animations:
+        yield from anim
+        yield from wait_for(delay)
 
 
 def erase_line(screen, y: int):
@@ -53,7 +68,7 @@ def appear_left(screen, y: int, text: str, color: int = 255, delay: int = 0):
 
 
 def fadein(screen, animation, *args, delay: int =0):
-    """Fade in a certain animation.
+    """Fade in a given animation.
     To work properly, the animation should be short : Each play of the
     animation changes of one shade the brightness.
     Args:
@@ -67,12 +82,38 @@ def fadein(screen, animation, *args, delay: int =0):
         yield from wait_for(delay)
 
 
+def fadeout(screen, animation, *args, delay: int = 0):
+    """Fade out a given animation."""
+    for color in reversed(range(232, 255)):
+        yield from animation(screen, *args, color=color)
+        yield from wait_for(delay)
+
+
+
 def put_char(screen, y: int, x: int, char: str, color: int = 255):
+    """Put a char in the screen."""
     yield [lambda fr: Frame.char_at(fr, y, x, str(char)[0], color)]
 
 
 def put_text(screen, y: int, x: int, text: str, color: int = 255):
+    """Put a text in the screen."""
     yield [lambda fr: Frame.str_at(fr, y, x, str(text), color)]
+
+
+def bullet(screen, y: int, x: int, depth: int = 0, color: int = 255):
+    """Put a bullet for item lists.
+    The depth changes the symbol for the bullet. The bullets by depth are :
+    0 : ●
+    1 : ○
+    2 : ■
+    3 : □
+    4 : -
+    """
+    yield from put_char(screen, y, x, '●○■□-­'[depth])
+
+
+def bell(screen, y: int, x: int, text: str):
+    yield from put_char(screen, y, x, '\u0007')
 
 
 def fadein_text(screen, y: int, x: int, text: str, delay: int = 0):
@@ -86,18 +127,19 @@ def center_fadein(screen, y: int, text: str, delay: int = 0):
     yield from fadein(screen, center, y, text, delay=delay)
 
 
-# def center_appear_up(screen, text: str, final_y: int = None,
-#     color: int = 255, delay: int = 0):
-#     """Appear the text from to top."""
-#     if final_y is None:
-#         final_y = screen.height // 2
-#     else:
-#         final_y = int(final_y)
-#     margin = (screen.width - len(text)) // 2
-#     for y in range(final_y):
-#         yield from put_text(yield, y, margin)
-#         yield from center(screen, y, str(text), color=int(color))
-#         yield from wait_for(delay)
+def center_appear_up(screen, text: str, final_y: int = None,
+    color: int = 255, delay: int = 0):
+    """Appear the text from to top."""
+    if final_y is None:
+        final_y = screen.height // 2
+    else:
+        final_y = int(final_y)
+    margin = (screen.width - len(text)) // 2
+    for y in range(final_y):
+        yield from center(screen, y, str(text), color=int(color))
+        if y > 0:
+            yield from center(screen, y-1, " "*len(str(text)))
+        yield from wait_for(delay)
 
 
 def appear(screen, line: int, text: str, delay: int = 0):
@@ -120,14 +162,16 @@ def box(screen, topleft: (int, int), bottomright: (int, int), color: int = 255):
 
 def fadein_box(screen, topleft: (int, int), bottomright: (int, int),
                delay: int = 0):
+    """Fade in a box."""
     for color in range(235, 255):
         yield from box(screen, topleft, bottomright, color=color)
         yield from wait_for(delay)
 
 
-def boxed(screen, y: int, x: int, text: str,
+def boxed_text(screen, y: int, x: int, text: str,
           full_width: bool = False,
           color: int = 255):
+    """Surround text with a box."""
     yield from put_text(screen, y, x, text, color)
     if full_width:
         yield from box(screen, (y-1, 0), (y+1, screen.width-1), color)
@@ -137,7 +181,8 @@ def boxed(screen, y: int, x: int, text: str,
 
 def fadein_boxed(screen, y: int, x: int, text: str, full_width: bool = False,
         delay: int = 0):
-    yield from fadein(screen, boxed, y, x, text, full_width, delay=delay)
+    """Fade in a boxed text."""
+    yield from fadein(screen, boxed_text, y, x, text, full_width, delay=delay)
 
 
 def boxed_centered(screen, y: int, text: str,
@@ -151,18 +196,20 @@ def boxed_centered(screen, y: int, text: str,
         yield from box(screen, (y-1, margin-1), (y+1, margin+len(text)), color)
 
 
-def circle(screen, x: int, y: int, radius: int,
-           y_stretch: int = 1, x_stretch: int = 1,
-           fill: str = '█',
-           color: int = 255):
-    circle_pixels = []
-    for line in range(y-radius*y_stretch, y+radius*y_stretch+1):
-        for col in range(x-radius*x_stretch, x+radius*x_stretch+1):
-            if x_stretch*(col-x)**2 + y_stretch*(line-y)**2 <= radius**2:
-                circle_pixels.extend(next(
-                    put_char(screen, line, col, str(fill)[0], color)
-                    ))
-    yield circle_pixels
+# def circle(screen, x: int, y: int, radius: int,
+#            y_stretch: int = 1, x_stretch: int = 1,
+#            fill: str = '█',
+#            color: int = 255):
+#     circle_pixels = []
+#     for line in range(y-radius*y_stretch, y+radius*y_stretch+1):
+#         for col in range(x-radius*x_stretch, x+radius*x_stretch+1):
+#             if x_stretch*(col-x)**2 + y_stretch*(line-y)**2 <= radius**2:
+#                 circle_pixels.extend(next(
+#                     put_char(screen, line, col, str(fill)[0], color)
+#                     ))
+#     yield circle_pixels
+
+
 
 
 
