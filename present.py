@@ -24,9 +24,11 @@ def main(scr):
             appear(scr, 2, "now we replace it"),
             appear_left(scr, 6, "wooooh !", delay=3),
             delay=50
-            )
+            ),
+        fadein(scr, boxed_centered, 8, "synchronously appearing text"),
+        after(300, fadein(scr, circle, scr.width//2, 20, 13, 2)),
+        after(300, fadein(scr, circle, scr.width//2, 20, 10, 2, 1, ' ')),
     )
-    anim = appear(scr, 2, "an appearing text")
     run_anim(screen=scr, anim=anim)
 
 
