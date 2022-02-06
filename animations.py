@@ -40,6 +40,10 @@ def one_by_one(*animations, delay: int = 0):
         yield from wait_for(delay)
 
 
+def repeat(animation, repetitions: int = 2, delay: int = 0):
+    for _ in range(int(repetitions)):
+        yield from animation
+
 def erase_line(screen, y: int):
     """Erase a given line."""
     yield [lambda fr: Frame.erase_line(fr, y)]
@@ -77,10 +81,10 @@ def fadein(screen, animation, *args, delay: int =0):
 
 def fadeout(screen, animation, *args, delay: int = 0):
     """Fade out a given animation."""
-    for color in reversed(range(232, 255)):
+    for color in reversed(range(233, 253)):
         yield from animation(screen, *args, color=color)
         yield from wait_for(delay)
-
+    yield from animation(screen, *args, color=0)
 
 
 def put_char(screen, y: int, x: int, char: str, color: int = 255):
@@ -114,10 +118,15 @@ def fadein_text(screen, y: int, x: int, text: str, delay: int = 0):
     yield from fadein(screen, put_text, y, x, text, delay=delay)
 
 
-def center_fadein(screen, y: int, text: str, delay: int = 0):
+def fadein_center(screen, y: int, text: str, delay: int = 0):
     """Fade in the centered text.
     Duration: 20 frames (multiplied by delay+1)."""
     yield from fadein(screen, center, y, text, delay=delay)
+
+
+def fadeout_center(screen, y: int, text: str, delay: int = 0):
+    """Fade out the centered text."""
+    yield from fadeout(screen, center, y, text, delay=delay)
 
 
 def center_appear_up(screen, text: str, final_y: int = None,
@@ -141,7 +150,7 @@ def appear(screen, line: int, text: str, delay: int = 0):
     # if the text is less large than the screen, then center it
     if len(text) < screen.width:
         yield from concat(erase_line(screen, line),
-                          center_fadein(screen, line, text, delay))
+                          fadein_center(screen, line, text, delay))
     # if there is too much text, then it well be automatically left-aligned
     # and wrapped by the frame's *str_at* method.
     else:
