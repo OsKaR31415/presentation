@@ -33,13 +33,6 @@ def after(frames_to_wait: int, animation):
     yield from animation
 
 
-def then(first_anim, second_anim, delay: int = 0):
-    """Create a new animation made of *first_anim* and then *second_anim*."""
-    yield from first_anim
-    yield from wait_for(delay)
-    yield from second_anim
-
-
 def one_by_one(*animations, delay: int = 0):
     """Make animations to be played one at a time."""
     for anim in animations:
@@ -188,7 +181,7 @@ def fadein_boxed(screen, y: int, x: int, text: str, full_width: bool = False,
 def boxed_centered(screen, y: int, text: str,
         full_width: bool = False,
         color: int = 255):
-    yield from center(screen, y, text)
+    yield from center(screen, y, text, color)
     if full_width:
         yield from box(screen, (y-1, 0), (y+1, screen.width-1), color=color)
     else:
