@@ -196,18 +196,18 @@ def boxed_centered(screen, y: int, text: str,
         yield from box(screen, (y-1, margin-1), (y+1, margin+len(text)), color)
 
 
-# def circle(screen, x: int, y: int, radius: int,
-#            y_stretch: int = 1, x_stretch: int = 1,
-#            fill: str = '█',
-#            color: int = 255):
-#     circle_pixels = []
-#     for line in range(y-radius*y_stretch, y+radius*y_stretch+1):
-#         for col in range(x-radius*x_stretch, x+radius*x_stretch+1):
-#             if x_stretch*(col-x)**2 + y_stretch*(line-y)**2 <= radius**2:
-#                 circle_pixels.extend(next(
-#                     put_char(screen, line, col, str(fill)[0], color)
-#                     ))
-#     yield circle_pixels
+def circle(screen, x: int, y: int, radius: int,
+           y_stretch: int = 1, x_stretch: int = 1,
+           fill: str = '█',
+           color: int = 255):
+    circle_pixels = []
+    for line in range(y-radius*y_stretch, y+radius*y_stretch+1):
+        for col in range(x-radius*x_stretch, x+radius*x_stretch+1):
+            if x_stretch*(col-x)**2 + y_stretch*(line-y)**2 <= radius**2:
+                circle_pixels.extend(next(
+                    put_char(screen, line, col, str(fill)[0], color)
+                    ))
+    yield circle_pixels
 
 
 
