@@ -26,8 +26,8 @@ def main(scr):
             delay=50
             ),
         fadein(scr, boxed_centered, 8, "synchronously appearing text"),
-        after(300, fadein(scr, circle, scr.width//2, 20, 13, 2)),
-        after(300, fadein(scr, circle, scr.width//2, 20, 10, 2, 1, ' ')),
+        after(300, fadein(scr, circle, scr.width//2, 20, 13, 3)),
+        after(300, fadein(scr, circle, scr.width//2, 20, 10, 3, 1, ' ')),
     )
     run_anim(screen=scr, anim=anim)
 
