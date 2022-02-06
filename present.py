@@ -18,17 +18,12 @@ def run_anim(screen, anim, post_delay: int = 100):
 
 def main(scr):
     anim = concat(
-        one_by_one(
-            appear(scr, 2, "an appearing text"),
-            appear(scr, 4, "another appearing text"),
-            appear(scr, 2, "now we replace it"),
-            appear_left(scr, 6, "wooooh !", delay=3),
-            delay=50
-            ),
-        fadein(scr, boxed_centered, 8, "synchronously appearing text"),
-        after(300, fadein(scr, circle, scr.width//2, 20, 13, 3)),
-        after(300, fadein(scr, circle, scr.width//2, 20, 10, 3, 1, ' ')),
-    )
+        repeat(one_by_one(
+            fadein_center(scr, 12, "cool !"),
+            fadeout_center(scr, 12, "cool !"),
+            delay=100,
+            ))
+        )
     run_anim(screen=scr, anim=anim)
 
 
