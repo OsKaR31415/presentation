@@ -3,13 +3,13 @@
 from textwrap import wrap
 
 class Frame:
-    def __init__(self, width, height):
-        self.width = int(width)
-        self.height = int(height)
+    def __init__(self, screen):
+        self.width = screen.width
+        self.height = screen.height
         self.text = [[" " for _ in range(self.width)]
                      for _ in range(self.height)]
-        self.color = [[0 for _ in range(width)]
-                      for _ in range(height)]
+        self.color = [[0 for _ in range(self.width)]
+                      for _ in range(self.height)]
 
     def show(self, screen) -> None:
         """Show the frame in a screen."""
@@ -50,6 +50,13 @@ class Frame:
         """
         self.text[y] = [" " for _ in range(self.width)]
         return self
+
+    def clear(self):
+        """Clear the whole frame."""
+        self.text = [[" " for _ in range(self.width)]
+                     for _ in range(self.height)]
+        self.color = [[0 for _ in range(width)]
+                      for _ in range(height)]
 
     def box(self, topleft: (int, int), bottomright: (int, int),
             color: int =255):
