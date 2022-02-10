@@ -4,6 +4,7 @@ from textwrap import wrap
 
 class Frame:
     def __init__(self, screen):
+        self.screen = screen
         self.width = screen.width
         self.height = screen.height
         self.text = [[" " for _ in range(self.width)]
@@ -11,14 +12,13 @@ class Frame:
         self.color = [[0 for _ in range(self.width)]
                       for _ in range(self.height)]
 
-    def show(self, screen) -> None:
+    def show(self) -> None:
         """Show the frame in a screen."""
-        self.width = screen.width
-        self.height = screen.height
-        for x in range(self.width):
-            for y in range(self.height):
-                screen.print_at(self.text[y][x], x, y, colour=self.color[y][x])
-        screen.refresh()
+        for x in range(self.screen.width):
+            for y in range(self.screen.height):
+                self.screen.print_at(self.text[y][x], x, y,
+                                     colour=self.color[y][x])
+        self.screen.refresh()
 
     def char_at(self, y: int, x: int, char: str, color: int =255):
         """Set the character at the given position (with the given colour)."""
@@ -55,8 +55,9 @@ class Frame:
         """Clear the whole frame."""
         self.text = [[" " for _ in range(self.width)]
                      for _ in range(self.height)]
-        self.color = [[0 for _ in range(width)]
-                      for _ in range(height)]
+        self.color = [[0 for _ in range(self.width)]
+                      for _ in range(self.height)]
+        return self
 
     def box(self, topleft: (int, int), bottomright: (int, int),
             color: int =255):
