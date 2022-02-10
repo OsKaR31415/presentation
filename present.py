@@ -1,6 +1,6 @@
 from asciimatics.screen import Screen
 from frame import Frame  # object representing a frame
-from animations import Animation  # animation functions
+from animations import *  # animation functions
 from time import time, sleep
 
 
@@ -10,15 +10,16 @@ def run_animation(screen, anim, post_delay: int = 0):
         prev_frame_time = time()
         for anim in changes:
             fr = anim(fr)
-            # key = screen.get_key()
-            if screen.get_key() == ord('n'):
+            key = screen.get_key()
+            if key == ord('n'):
+                fr.clear()
                 return "next"
-            if screen.get_key() == ord('p'):
+            if key == ord('p'):
                 return "previous"
-            if screen.get_key() == ord('r'):
+            if key == ord('r'):
                 return "restart"
-            if screen.get_key() == ord('q'):
-                return "quit"
+            if key == ord('q'):
+                exit(0)
         fr.show(screen)
         while time() - prev_frame_time < 0.01:
             pass
@@ -29,61 +30,73 @@ def run_animation(screen, anim, post_delay: int = 0):
 def run_presentation(screen, presentation: list):
     """Run the given presentation in the given screen.
     A presentation is simply a list of animations, each of for a slide."""
-    a = Animation(screen)
-    presentation = a.one_by_one(*presentation, pauses=True)
-    run_animation(screen, presentation)
-    return
+    fr = Frame(screen)
     slide_idx = 0
     while slide_idx < len(presentation):
-        screen.clear()
-        exit_status = run_animation(screen, presentation[slide_idx])
-        if exit_status == "quit":
-            return
-        elif exit_status == "previous":
-            slide_idx -= 2
-            if slide_idx < 0: slide_idx = 0
+        # None means a pause
+        if presentation[slide_idx] is None:
+            key = screen.get_key()
+            while key == screen.get_key():
+                pass
+            slide_idx += 1
             continue
-        elif exit_status == "restart":
-            continue
-        # else:
-        #     key = screen.get_key()
-        #     while key == screen.get_key():
-        #         pass
+        fr.clear()
+        ##### Here, play the animation #####
+        for list_modifications in presentation[slide_idx]:
+            prev_frame_time = time()
+            for modif in list_modifications:
+                fr = modif(fr)
+                key = screen.get_key()
+                if key == ord('n'):
+                    return
+            fr.show()
+            while time() - prev_frame_time < 0.01:
+                pass
+            # else: continue
+        slide_idx += 1
 
 
 def presentation(screen):
-    a = Animation(screen)
+    a = PrimitiveAnimations(screen)
     present= [
-        a.concat(
-            a.appear(2, "super"),
-            a.appear(3, "cool!"),
-            a.after(100, a.appear(5, "Et facile")),
-            a.after(200, a.one_by_one(
-                a.appear(5, "on remplace"),
-                a.appear_left(6, "-> whoooo !"),
-                delay=50,
-            ))
+
+        a.one_by_one(
+            a.title("slide 1"),
+            a.appear(4, "this library is usefull for making presentations"),
+            a.appear(6, "more precisely, text-based presentations"),
+            a.appear(8, "Here is a little demonstration of what it can do"),
+            # pauses=True
         ),
+
         a.one_by_one(
-            a.appear(1, "des"),
-            a.appear(2, "animations"),
-            a.appear(3, "qui"),
-            a.appear(4, "se"),
-            a.appear(5, "suivent"),
-            ),
+            a.title("slide 2"),
+            a.appear(2, "you"),
+            a.appear(3, "can"),
+            a.appear(4, "make"),
+            a.appear(5, "things"),
+            a.appear(6, "appear"),
+        ),
+
         a.one_by_one(
-            a.appear(1, "plus"),
-            a.appear(2, "ou"),
-            a.appear(3, "moins"),
-            a.appear(4, "vite"),
+            a.title("slide 3"),
+            a.appear(2, "these"),
+            a.appear(3, "ones"),
+            a.appear(4, "are"),
+            a.appear(5, "slower"),
             delay=40,
             ),
+
         a.concat(
-            a.appear(1, "ou bien"),
-            a.appear(3, "toutes en même temps"),
-            a.appear(10, "c'est bien aussi"),
-            a.pause(),
+            a.title("slide 3"),
+            a.appear(2, "animations are very powerful"),
+            a.after(100, a.appear_left(4, "-> here it comes", delay=3)),
+            a.bulleted(6,  5, "and"),
+            a.bulleted(7,  5, "we"),
+            a.bulleted(8,  5, "have"),
+            a.bulleted(9, 5, "bullet"),
+            a.bulleted(10, 5, "lists"),
             ),
+
         ]
     run_presentation(screen, present)
     # for a in present:
