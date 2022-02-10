@@ -8,7 +8,7 @@ Frame object are from `frame.py`
 from frame import Frame  # animations are returning frames
 from itertools import zip_longest, chain
 
-class Animation:
+class PrimitiveAnimations:
     def __init__(self, screen):
         self.screen = screen
 
@@ -24,6 +24,10 @@ class Animation:
             # flatten each changes (join the iterators)
             yield chain.from_iterable(changes)
 
+    def __rshift__(self, other):
+        yield from self.concat(self, other)
+
+
 
     def wait_for(self, delay: int):
         for _ in range(delay):
@@ -34,6 +38,8 @@ class Animation:
         key = self.screen.get_key()
         while key == self.screen.get_key():
             pass
+        if key == ord('q'):
+            exit(0)
         yield []
 
 
@@ -59,12 +65,12 @@ class Animation:
             delay (int): The delay between each animation.
         """
         for anim in animations:
+            if insert is not None:
+                yield from insert
             yield from anim
             yield from self.wait_for(delay)
             if pauses:
                 yield from self.pause()
-            if insert is not None:
-                yield from insert()
 
 
     def repeat(self, animation, repetitions: int = 2, delay: int = 0):
@@ -84,6 +90,11 @@ class Animation:
         """Write text at the center of the screen."""
         margin = (self.screen.width - len(text)) // 2
         yield [lambda fr: Frame.str_at(fr, y, margin, text, color)]
+
+
+    def title(self, text: str, color: int = 214):
+        """Write the frame title."""
+        yield from self.center(0, text, color)
 
 
     def appear_left(self, y: int, text: str, color: int = 255, delay: int = 0):
@@ -138,6 +149,14 @@ class Animation:
         4 : -
         """
         yield from self.put_char(y, x, '●○■□-­'[depth])
+
+
+    def bulleted(self, y: int, x: int,
+                 text: str,
+                 depth: int = 0,
+                 color: int = 255):
+        yield from self.concat(self.bullet(y, x, depth, color),
+                               self.put_text(y, x+2, text, color))
 
 
     def bell(self, y: int, x: int, text: str):
@@ -245,6 +264,25 @@ class Animation:
         yield circle_pixels
 
 
+
+
+# class Animation(PrimitiveAnimations):
+#     def __init__(self, animation_function, screen):
+#         self.screen = screen
+#         self.animation = animation_function
+
+
+#     def __rshift__(self, other):
+#         """The >> operator between two animations will join the animation,
+#         and they will result in an animation where they are played one by one.
+#         The >> operator also adds a pause between animations.
+#         Example:
+#             >>> # a slide in a presentation is basically :
+#             >>> slide = title >> text1 >> text2 >> text3 >> conclusion
+#             >>> # here, each of title, text1, text2 etc appear one by one.
+#             >>> # you have to press a key to get the next one, each time
+#         """
+#         yield from self.one_by_one(self.animation, other.animation, pauses=True)
 
 
 
