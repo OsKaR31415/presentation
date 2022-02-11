@@ -33,26 +33,39 @@ def run_presentation(screen, presentation: list):
     fr = Frame(screen)
     slide_idx = 0
     while slide_idx < len(presentation):
-        # None means a pause
-        if presentation[slide_idx] is None:
-            key = screen.get_key()
-            while key == screen.get_key():
-                pass
-            slide_idx += 1
-            continue
-        fr.clear()
         ##### Here, play the animation #####
         for list_modifications in presentation[slide_idx]:
             prev_frame_time = time()
             for modif in list_modifications:
                 fr = modif(fr)
                 key = screen.get_key()
-                if key == ord('n'):
-                    return
+                if key == ord('n'):  # next
+                    slide_idx += 1
+                    continue
+                if key == ord('p'):  # previous
+                    slide_idx -= 1
+                    continue
+                if key == ord('r'):  # restart
+                    continue
+                if key == ord('q'):  # quit
+                    exit(0)
             fr.show()
             while time() - prev_frame_time < 0.01:
                 pass
-            # else: continue
+        # a pause
+        key = screen.get_key()
+        while key == screen.get_key():
+            if key == ord('n'):  # next
+                slide_idx += 1
+                continue
+            if key == ord('p'):  # previous
+                slide_idx -= 1
+                continue
+            if key == ord('r'):  # restart
+                continue
+            if key == ord('q'):  # quit
+                exit(0)
+        fr.clear()
         slide_idx += 1
 
 
@@ -83,7 +96,7 @@ def presentation(screen):
             a.appear(3, "ones"),
             a.appear(4, "are"),
             a.appear(5, "slower"),
-            delay=40,
+            delay=20,
             ),
 
         a.concat(
