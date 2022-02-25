@@ -4,6 +4,8 @@ from animations import *  # animation functions
 from time import time, sleep
 
 
+█
+
 def run_animation(screen, anim, post_delay: int = 0):
     fr = Frame(screen)
     for changes in anim:
@@ -41,10 +43,10 @@ def run_presentation(screen, presentation: list):
                 key = screen.get_key()
                 if key == ord('n'):  # next
                     slide_idx += 1
-                    continue
+                    break
                 if key == ord('p'):  # previous
                     slide_idx -= 1
-                    continue
+                    break
                 if key == ord('r'):  # restart
                     continue
                 if key == ord('q'):  # quit
