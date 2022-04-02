@@ -4,7 +4,6 @@ from animations import *  # animation functions
 from time import time, sleep
 
 
-█
 
 def run_animation(screen, anim, post_delay: int = 0):
     fr = Frame(screen)
@@ -36,15 +35,16 @@ def run_presentation(screen, presentation: list):
     slide_idx = 0
     while slide_idx < len(presentation):
         ##### Here, play the animation #####
-        for list_modifications in presentation[slide_idx]:
+        for slide_modification in presentation[slide_idx]:
             prev_frame_time = time()
-            for modif in list_modifications:
+            for modif in slide_modification:
                 fr = modif(fr)
                 key = screen.get_key()
                 if key == ord('n'):  # next
                     slide_idx += 1
                     break
                 if key == ord('p'):  # previous
+                    print("\a")
                     slide_idx -= 1
                     break
                 if key == ord('r'):  # restart
@@ -55,17 +55,18 @@ def run_presentation(screen, presentation: list):
             while time() - prev_frame_time < 0.01:
                 pass
         # a pause
-        key = screen.get_key()
+        # key = screen.get_key()
         while key == screen.get_key():
             if key == ord('n'):  # next
                 slide_idx += 1
                 continue
-            if key == ord('p'):  # previous
+            elif key == ord('p'):  # previous
+                print('\a')
                 slide_idx -= 1
                 continue
-            if key == ord('r'):  # restart
+            elif key == ord('r'):  # restart
                 continue
-            if key == ord('q'):  # quit
+            elif key == ord('q'):  # quit
                 exit(0)
         fr.clear()
         slide_idx += 1
